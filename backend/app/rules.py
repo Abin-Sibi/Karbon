@@ -10,13 +10,6 @@ class FLAGS:
 
 # This is already written for your reference
 def latest_financial_index(data: dict):
-    """
-    Determine the index of the latest standalone financial entry in the data.
-
-    This function iterates over the "financials" list in the given data dictionary.
-    It returns the index of the first financial entry where the "nature" key is equal to "STANDALONE".
-    If no standalone financial entry is found, it returns 0.
-    """
     for index, financial in enumerate(data.get("financials")):
         if financial.get("nature") == "STANDALONE":
             print(index)
@@ -25,16 +18,6 @@ def latest_financial_index(data: dict):
 
 
 def total_revenue(data: dict, financial_index: int) -> float:
-    """
-    Calculate the total revenue from the financial data at the given index.
-
-    This function accesses the "financials" list in the data dictionary at the specified index.
-    It retrieves the net revenue from the "pnl" (Profit and Loss) section under "lineItems".
-
-    :param data: A dictionary containing financial data.
-    :param financial_index: The index of the financial entry to be used for calculation.
-    :return: The net revenue value from the financial data.
-    """
     financials = data["financials"][financial_index]
     try:
         return financials["pnl"]["lineItems"]["net_revenue"]
@@ -44,16 +27,6 @@ def total_revenue(data: dict, financial_index: int) -> float:
 
 
 def total_borrowing(data: dict, financial_index: int) -> float:
-    """
-    Calculate the total borrowings for the financial data at the given index.
-
-    This function sums the long-term and short-term borrowings from the balance sheet ("bs")
-    section of the financial data.
-
-    :param data: A dictionary containing financial data.
-    :param financial_index: The index of the financial entry to be used for calculation.
-    :return: The total borrowings.
-    """
     financials = data["financials"][financial_index]
     
     # Use .get() to safely access 'longTermBorrowing' and provide a default of 0 if it's missing
@@ -66,16 +39,6 @@ def total_borrowing(data: dict, financial_index: int) -> float:
 
 
 def iscr(data: dict, financial_index: int) -> float:
-    """
-    Calculate the Interest Service Coverage Ratio (ISCR) for the financial data at the given index.
-
-    ISCR is calculated as (Profit Before Interest and Tax + Depreciation + 1) divided by (Interest expenses + 1).
-    The addition of 1 is to avoid division by zero.
-
-    :param data: A dictionary containing financial data.
-    :param financial_index: The index of the financial entry to be used for the ISCR calculation.
-    :return: The ISCR value.
-    """
     financials = data["financials"][financial_index]
     profit_before_interest_tax = financials["pnl"]["lineItems"]["profit_before_tax"]
     depreciation = financials["pnl"]["lineItems"].get("depreciation", 0)
@@ -85,15 +48,6 @@ def iscr(data: dict, financial_index: int) -> float:
 
 
 def iscr_flag(data: dict, financial_index: int):
-    """
-    Determine the flag color based on the Interest Service Coverage Ratio (ISCR) value.
-
-    If ISCR >= 2, assign a GREEN flag; otherwise, assign a RED flag.
-
-    :param data: A dictionary containing financial data.
-    :param financial_index: The index of the financial entry to be used for the ISCR calculation.
-    :return: FLAGS.GREEN or FLAGS.RED based on the ISCR value.
-    """
     iscr_value = iscr(data, financial_index)
     if iscr_value >= 2:
         return FLAGS.GREEN
@@ -101,15 +55,6 @@ def iscr_flag(data: dict, financial_index: int):
 
 
 def total_revenue_5cr_flag(data: dict, financial_index: int):
-    """
-    Determine the flag color based on whether the total revenue exceeds 50 million.
-
-    If total revenue >= 50 million, assign a GREEN flag; otherwise, assign a RED flag.
-
-    :param data: A dictionary containing financial data.
-    :param financial_index: The index of the financial entry to be used for the revenue calculation.
-    :return: FLAGS.GREEN or FLAGS.RED based on the total revenue.
-    """
     revenue = total_revenue(data, financial_index)
     if revenue >= 50_000_000:
         return FLAGS.GREEN
@@ -117,16 +62,6 @@ def total_revenue_5cr_flag(data: dict, financial_index: int):
 
 
 def borrowing_to_revenue_flag(data: dict, financial_index: int):
-    """
-    Determine the flag color based on the ratio of total borrowings to total revenue.
-
-    If borrowing to revenue ratio <= 0.25, assign a GREEN flag; otherwise, assign an AMBER flag.
-    If total revenue is 0, avoid division by zero and return a RED flag indicating risk.
-
-    :param data: A dictionary containing financial data.
-    :param financial_index: The index of the financial entry to be used for the ratio calculation.
-    :return: FLAGS.GREEN or FLAGS.AMBER or FLAGS.RED based on the borrowing to revenue ratio.
-    """
     total_borrowings_value = total_borrowing(data, financial_index)
     total_revenue_value = total_revenue(data, financial_index)
     print(total_borrowings_value,total_revenue_value)
