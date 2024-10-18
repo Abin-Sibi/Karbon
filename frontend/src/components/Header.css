@@ -1,0 +1,31 @@
+/* Header.css */
+.header {
+    background-color: #333;
+    padding: 1rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .navbar li {
+    display: inline;
+  }
+  
+  .navbar button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .navbar button:hover {
+    text-decoration: underline;
+  }
+  
